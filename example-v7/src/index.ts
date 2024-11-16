@@ -30,7 +30,7 @@ const imagePaths = {
   
   const translations = [
     // "This is an example {green_pipe.webp} of text with an image {gold_moon.png}\nThis is  {green_pipe.webp} of an image {gold_moon.png}",
-    "Это пример {green_pipe.webp} текста\nс изображением {gold_moon.png}",
+    "Это пример {green_pipe.webp} мультилайн текста\nс изображением {gold_moon.png} и даже не одним {blue_pipe.webp}",
     // "Ini adalah contoh {green_pipe.webp} teks dengan gambar {gold_moon.png}",                     // Indonesian
     // "Este es un ejemplo de texto con una imagen {gold_moon.png}",                // Spanish (LATAM)
     // "Este é um exemplo de texto com uma imagem {gold_moon.png}",                  // Portuguese (Brazilian)
