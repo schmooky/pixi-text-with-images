@@ -66,9 +66,10 @@ export class StyledTextWithImagesContainer extends Container {
 
     console.log('New Text:', newText)
 
-    // Split the text by placeholders
-    const fragments = this._text.split(/(\{.*?\})/g);
+    // Split the text by placeholders and newline characters
+    const fragments = this._text.split(/(\{.*?\})|\n/g);
     let xPosition = 0;
+    let yPosition = 0;
 
     let textMetrics = TextMetrics.measureText(this._text, this.style)
 
@@ -79,12 +80,12 @@ export class StyledTextWithImagesContainer extends Container {
     console.log(textMetrics)
     console.log(fragments)
     fragments.forEach((fragment) => {
-      if (fragment.startsWith("{") && fragment.endsWith("}")) {
+      if (fragment?.startsWith("{") && fragment?.endsWith("}")) {
         // Extract the image key without braces
         const imageName = fragment.slice(1, -1);
         if (Assets.cache.has(imageName)) {
           const sprite = new Sprite(Assets.cache.get(imageName));
-          const height = baseTextMetrics.height;
+          const height = baseTextMetrics.fontProperties.fontSize;
           const SCALE = 1;
           // Resize sprite to fit the line height
           sprite.width = (height / sprite.height) * sprite.width * SCALE; // Maintain aspect ratio
@@ -93,7 +94,7 @@ export class StyledTextWithImagesContainer extends Container {
           // Set anchor to center the sprite
           sprite.anchor.set(0.5, 0.5);
           sprite.x = xPosition + sprite.width / 2; // Offset xPosition for centering
-          sprite.y = baseTextMetrics.height / 2; // Center vertically within the line height
+          sprite.y = yPosition + height / 2; // Center vertically within the line height
 
           this.addChild(sprite);
           
@@ -102,11 +103,14 @@ export class StyledTextWithImagesContainer extends Container {
         } else {
             console.error(`Texture ${imageName} is missing in assets cache`);
         }
+      } else if (fragment === '\n' || fragment===undefined) {
+        xPosition = 0; // Reset xPosition to 0 if a newline is found
+        yPosition += lineHeight + textMetrics.fontProperties.fontSize; // Increment the y position to move to the next line
       } else {
         // Create a text object for non-placeholder text
         const textSprite = new Text(fragment, this.style);
         textSprite.x = xPosition;
-        textSprite.y = 0; // Keep the text at the top for initial positioning
+        textSprite.y = yPosition; // Keep the text at the top for initial positioning
         this.addChild(textSprite);
         xPosition += textSprite.width; // Move cursor position forward
       }
